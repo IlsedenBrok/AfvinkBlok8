@@ -42,63 +42,51 @@ def read_files():
 
 
 def get_info():
-    try:
         for c in compound_list:
             compound = c
             for d in disease_list:
                 disease = d
                 for f in food_list:
-                    food = f
-                    query = '\"' + compound + '\"' + " AND " + '\"' + disease + '\"' + " AND " + '\"' + food + '\"'
-                    print("Searching for ", query)
-                    results = search(query)
-                    id_list = results['IdList']
-                    papers = fetch_details(id_list)
-                    
-                    return papers
-    except RuntimeError:
-        print(query, " heeft 0 resultaten")
+                    try:
+                        food = f
+                        query = '\"' + compound + '\"' + " AND " + '\"' + disease + '\"' + " AND " + '\"' + food + '\"'
+                        print("Searching for ", query)
+                        results = search(query)
+                        id_list = results['IdList']
+                        papers = fetch_details(id_list)
+                        counter = 0
+                        abstracts = []
+                        names = []
+                        for i, paper in enumerate(papers['PubmedArticle']):
+                            counter += 1
+                            try:
+                                abstracts.append(paper['MedlineCitation']['Article']['Abstract']['AbstractText'])
+                                names.append(paper['MedlineCitation']['Article']['AuthorList'])
+                            except KeyError:
+                                pass
+                        i = 0
+                        y = 0
+                        z = 0
+                        line = str(names[i])
+                        first_name = re.findall("'Initials': '[a-zA-Z]+'", line)
+                        last_name = re.findall("LastName': '[a-zA-Z]+'", line)
+                        if first_name:
+                            result = str(first_name).split(',')
+                            while z < len(result):
+                                print(result[z])
+                                z += 1
+                        if last_name:
+                            result = str(last_name).split(',')
+                            while y < len(result):
+                                print(result[y])
+                                y += 1
+                    except RuntimeError:
+                        pass
+                return papers
 
-
-
-def save_details():
-    counter = 0
-    abstracts = []
-    names = []
-    for i, paper in enumerate(papers['PubmedArticle']):
-        counter += 1
-        try:
-            abstracts.append(paper['MedlineCitation']['Article']['Abstract']['AbstractText'])
-            names.append(paper['MedlineCitation']['Article']['AuthorList'])
-        except KeyError:
-            pass
-    return abstracts, names
-
-
-def get_names():
-    i = 0
-    print("lengte names   ", len(names))
-    print("names   ", names)
-    y = 0
-    z = 0
-    line = str(names[i])
-    first_name = re.findall("'Initials': '[a-zA-Z]+'", line)
-    last_name = re.findall("LastName': '[a-zA-Z]+'", line)
-    if first_name:
-        result = str(first_name).split(',')
-        while z < len(result):
-            print(result[z])
-            z += 1
-    if last_name:
-        result = str(last_name).split(',')
-        while y < len(result):
-            print(result[y])
-            y += 1
-        return first_name, last_name
 
 
 if __name__ == '__main__':
     disease_list, compound_list, food_list = read_files()
     papers = get_info()
-    abstracts, names = save_details()
-    first, last = get_names()
+
