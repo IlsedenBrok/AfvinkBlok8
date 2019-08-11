@@ -71,37 +71,38 @@ def get_info():
                             except KeyError:
                                 pass
 
-                        i = 0
-                        y = 0
-                        z = 0
-
                         abstract_list.append(abstracts)
                         number_list.append(len(abstracts))
 
-                        line = str(names[i])
-                        first_name = re.findall("'Initials': '[a-zA-Z]+'", line)
-                        last_name = re.findall("LastName': '[a-zA-Z]+'", line)
-                        if first_name:
-                            result = str(first_name).split(',')
-                            while z < len(result):
-                                # print(result[z])
-                                z += 1
-                        if last_name:
-                            result = str(last_name).split(',')
-                            while y < len(result):
-                                # print(result[y])
-                                y += 1
                         search_count += 1
 
                     except RuntimeError:
                         pass
-    # print(query_list)
+
     maximum = max(number_list)
     place = number_list.index(maximum)
     abstract_highest_count = abstract_list[place]
     print("The abstracts of the most frequent combination: ")
     print(query_list[place+1], "\n")
     teller = 1
+
+    i = 0
+    y = 0
+    z = 0
+    line = str(names[i])
+    first_name = re.findall("'Initials': '[a-zA-Z]+'", line)
+    last_name = re.findall("LastName': '[a-zA-Z]+'", line)
+    if first_name:
+        result = str(first_name).split(',')
+        while z < len(result):
+            print("z", result[z])
+            z += 1
+    if last_name:
+        result = str(last_name).split(',')
+        while y < len(result):
+            print("y", result[y])
+            y += 1
+
     for abstract in abstract_highest_count:
         print(teller, ": ", abstract[0])
         # print(initials[teller])
